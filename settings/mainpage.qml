@@ -21,8 +21,6 @@ Page {
     ConfigurationGroup {
         id: proxyConf
         path: "/apps/gost-button"
-        property bool browserProxy: true
-        property bool browserRestart: true
     }
 
     Timer {
@@ -48,6 +46,7 @@ Page {
             if (activeProperty === "active") {
                 activeState = true
                 checkState.stop()
+                enableSwitch.busy = false;
             }
             else if (activeProperty === "inactive") {
                 activeState = false
@@ -126,35 +125,7 @@ Page {
                             return
                         }
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
-                        // if (proxyConf.browserProxy) {
-                        //     var proxy_reply = function() {
-                        //         var kill_reply = function() {
-                        //             if (!activeState) {
-                        //                 var object = Qt.createQmlObject("import org.nemomobile.lipstick 0.1; LauncherItem { filePath: \"/usr/share/applications/sailfish-browser.desktop\" }", enableSwitch, "LauncherItem")
-                        //                 object.launchApplication()
-                        //             }
-
-                        //             systemdServiceIface.updateProperties()
-                        //         };
-                        //         var kill_error = function(err) {
-                        //             console.log("error:", err);
-                        //         };
-                        //         if (proxyConf.browserRestart) {
-                        //             tools.request("kill_browser", {}, {
-                        //                 on_reply: kill_reply, on_error: kill_error
-                        //             });
-                        //         }
-                        //     };
-                        //     var proxy_error = function(err) {
-                        //         console.log("error:", err);
-                        //     };
-                        //     tools.request(activeState ? "disable_proxy" : "enable_proxy", {}, {
-                        //         on_reply: proxy_reply, on_error: proxy_error
-                        //     });
-                        // }
-                        // else {
-                        //     systemdServiceIface.updateProperties()
-                        // }
+                        
                         systemdServiceIface.updateProperties()
                         enableSwitch.busy = true
                     }
@@ -162,32 +133,7 @@ Page {
                 }
             }
 
-            // TextSwitch {
-            //     id: proxySwitch
-
-            //     automaticCheck: false
-            //     checked: proxyConf.browserProxy
-            //     text: "Sailfish browser proxy"
-            //     description: "Automatically set proxy when enabling tor"
-
-            //     onClicked: {
-            //         proxyConf.browserProxy = !proxyConf.browserProxy
-            //     }
-            // }
-
-            // TextSwitch {
-            //     id: restartSwitch
-
-            //     visible: proxyConf.browserProxy
-            //     automaticCheck: false
-            //     checked: proxyConf.browserRestart
-            //     text: "Restart Sailfish browser"
-            //     description: "Also restart Sailfish browser automatically"
-
-            //     onClicked: {
-            //         proxyConf.browserRestart = !proxyConf.browserRestart
-            //     }
-            // }
+            
         }
     }
 }
