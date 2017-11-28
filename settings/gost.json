@@ -1,0 +1,24 @@
+{
+    "translation_catalog": "settings-system",
+    "entries": [
+        {
+            "path": "system_settings/connectivity/gost",
+            "title": "Gost",
+            "translation_id": "settings_system-gost",
+            "type": "page",
+            "icon": "image://theme/icon-settings-gost",
+            "order": 200,
+            "params": {
+                "source": "/usr/share/jolla-settings/pages/gost/mainpage.qml"
+            }
+        },
+        {
+            "path": "system_settings/connectivity/gost/gost_active",
+            "type": "custom",
+            "params": {
+                "source": "/usr/share/jolla-settings/pages/gost/EnableSwitch.qml",
+                "type": "grid"
+            }
+        }
+    ]
+}
