@@ -185,7 +185,7 @@ Page {
                                 passField.text &&
                                 encryptionModel.get(comboField.currentIndex).name){
 //                            console.log(serverField.text +","+ portField.text  +","+ passField.text  +","+ encryptionModel.get(comboField.currentIndex).name)
-                            py.updateConfig(serverField.text, portField.text , passField.text , encryptionModel.get(comboField.currentIndex).name)
+                            py.updateConfig(serverField.text, portField.text , passField.text , encryptionModel.get(comboField.currentIndex).name);
                         }
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
@@ -218,7 +218,6 @@ Page {
                 EnterKey.enabled: text || inputMethodComposing
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: passField.focus = true
-//                validator: IntValidator{ bottom: 1; top: 5 }
             }
 
 
@@ -256,5 +255,9 @@ Page {
 
     Component.onCompleted: {
         py.getConfig();
+    }
+
+    Component.onDestruction: {
+        py.updateConfig(serverField.text, portField.text , passField.text , encryptionModel.get(comboField.currentIndex).name);
     }
 }
