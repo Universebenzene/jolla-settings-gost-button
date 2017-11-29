@@ -15,7 +15,7 @@ sample_configs = """{
     "Debug": true,
     "Retries": 3,
     "ServeNodes": [
-       "socks://127.0.0.1:10080"
+       "http://:10080"
     ],
     "ChainNodes": [
        "ss://aes-256-cfb:password@192.168.2.1:2379"
