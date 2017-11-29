@@ -4,6 +4,7 @@ import com.jolla.settings 1.0
 import org.nemomobile.dbus 2.0
 import org.nemomobile.configuration 1.0
 import Mer.Cutes 1.1
+import io.thp.pyotherside 1.3
 
 Page {
     id: page
@@ -32,6 +33,28 @@ Page {
         }
     }
 
+    ListModel{
+        id: encryptionModel
+        ListElement{
+            name: "aes-256-cfb"
+        }
+        ListElement{
+            name: "chacha20"
+        }
+        ListElement{
+            name: "aes-192-cfb"
+        }
+        ListElement{
+            name: "aes-128-cfb"
+        }
+        ListElement{
+            name: "rc4-md5"
+        }
+        ListElement{
+            name: "salsa20"
+        }
+    }
+
     DBusInterface {
         id: systemdServiceIface
         bus: DBus.SessionBus
@@ -51,6 +74,7 @@ Page {
             else if (activeProperty === "inactive") {
                 activeState = false
                 checkState.stop()
+                enableSwitch.busy = false;
             }
             else {
                 checkState.start()
@@ -84,6 +108,37 @@ Page {
             if (name == "gost.service") {
                 systemdServiceIface.updateProperties()
             }
+        }
+    }
+
+    Python{
+        id: py
+        Component.onCompleted: {
+            addImportPath(Qt.resolvedUrl('./'))
+            py.importModule('main', function () {
+
+            })
+        }
+
+        function updateConfig(server, port, passwd, encryption){
+            call_sync('main.update',[server, port, passwd, encryption])
+        }
+
+        function getConfig(){
+            call('main.getSS',[],function(result){
+                if(result){
+                    // ss://aes-256-cfb:password@192.168.2.1:2379
+                    var arr = result.replace("//","").split(":");
+                    var encryption = arr[1]
+                    var port = arr[3]
+                    var passwd = arr[2].split("@")[0];
+                    var server = arr[2].split("@")[1];
+                    serverField.text = server;
+                    portField.text = port;
+                    passField.text = passwd;
+                    comboField.value = encryption;
+                }
+            })
         }
     }
 
@@ -124,16 +179,79 @@ Page {
                         if (enableSwitch.busy) {
                             return
                         }
-                        systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
-                        
-                        systemdServiceIface.updateProperties()
+                        if (!activeState &&
+                                serverField.text &&
+                                portField.text &&
+                                passField.text &&
+                                encryptionModel.get(comboField.currentIndex).name){
+//                            console.log(serverField.text +","+ portField.text  +","+ passField.text  +","+ encryptionModel.get(comboField.currentIndex).name)
+                            py.updateConfig(serverField.text, portField.text , passField.text , encryptionModel.get(comboField.currentIndex).name)
+                        }
                         enableSwitch.busy = true
+                        systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
+                        systemdServiceIface.updateProperties()
+
                     }
                     onPressAndHold: enableItem.showMenu({ settingEntryPath: entryPath, isFavorite: favorites.isFavorite(entryPath) })
                 }
             }
 
-            
+
+
+            TextField{
+                id: serverField
+                enabled: !enableSwitch.checked
+                placeholderText: "Enter you server"
+                label: "Server"
+                width: parent.width
+                EnterKey.enabled: text || inputMethodComposing
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: portField.focus = true
+            }
+
+            TextField{
+                id: portField
+                enabled: !enableSwitch.checked
+                width: parent.width
+                placeholderText: "Enter you server port"
+                label: "Port"
+                EnterKey.enabled: text || inputMethodComposing
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: passField.focus = true
+//                validator: IntValidator{ bottom: 1; top: 5 }
+            }
+
+
+            PasswordField{
+                id: passField
+                enabled: !enableSwitch.checked
+                width: parent.width
+                placeholderText: "Enter you password"
+                label: "Password"
+                EnterKey.enabled: text || inputMethodComposing
+                EnterKey.iconSource: "image://theme/icon-m-enter-next"
+                EnterKey.onClicked: comboField.focus = true
+            }
+
+            ComboBox{
+                id: comboField
+                enabled: !enableSwitch.checked
+                width: parent.width
+                label: "Encryption"
+                menu: ContextMenu {
+                    Repeater {
+                        model: encryptionModel
+                        MenuItem {
+                            text: name
+                        }
+                    }
+                }
+
+            }
         }
+    }
+
+    Component.onCompleted: {
+        py.getConfig();
     }
 }

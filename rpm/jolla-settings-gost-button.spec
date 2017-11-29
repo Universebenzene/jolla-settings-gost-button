@@ -11,6 +11,7 @@ Group:      Qt/Qt
 License:    TODO
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   gost
+Requires:   pyotherside-qml-plugin-python3-qt5 >= 1.3.0
 
 %description
 Settings plugin adding gost control button
@@ -37,10 +38,11 @@ cp -r settings/*.sh %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/share/jolla-settings/pages/gost
 cp -r settings/*.qml %{buildroot}/usr/share/jolla-settings/pages/gost
 cp -r settings/*.js %{buildroot}/usr/share/jolla-settings/pages/gost
+cp -r settings/*.py %{buildroot}/usr/share/jolla-settings/pages/gost
 mkdir -p %{buildroot}/usr/share/jolla-settings/entries
 cp -r settings/*.json %{buildroot}/usr/share/jolla-settings/entries
-mkdir -p %{buildroot}/usr/share/themes/jolla-ambient/meegotouch/icons
-cp -r icons/*.png %{buildroot}/usr/share/themes/jolla-ambient/meegotouch/icons
+mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/icons
+cp -r icons/*.png %{buildroot}/usr/share/themes/sailfish-default/meegotouch/icons
 # << install pre
 
 # >> install post
@@ -51,6 +53,6 @@ cp -r icons/*.png %{buildroot}/usr/share/themes/jolla-ambient/meegotouch/icons
 %attr(0755, root, root) %{_bindir}/*
 %{_datadir}/jolla-settings/entries
 %{_datadir}/jolla-settings/pages
-%{_datadir}/themes/jolla-ambient/meegotouch/icons
+%{_datadir}/themes/sailfish-default/meegotouch/icons
 # >> files
 # << files
