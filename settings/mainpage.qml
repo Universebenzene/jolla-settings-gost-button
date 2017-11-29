@@ -243,6 +243,9 @@ Page {
                         model: encryptionModel
                         MenuItem {
                             text: name
+                            onClicked:{
+                                comboField.value = name;
+                            }
                         }
                     }
                 }
