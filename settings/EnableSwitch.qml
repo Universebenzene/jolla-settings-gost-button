@@ -96,35 +96,6 @@ Switch {
             return
         }
         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
-        // if (proxyConf.browserProxy) {
-        //     var proxy_reply = function() {
-        //         var restart_reply = function() {
-        //             if (!activeState) {
-        //                 var object = Qt.createQmlObject("import org.nemomobile.lipstick 0.1; LauncherItem { filePath: \"/usr/share/applications/sailfish-browser.desktop\" }", enableSwitch, "LauncherItem")
-        //                 object.launchApplication()
-        //             }
-
-        //             systemdServiceIface.updateProperties()
-        //         };
-        //         var restart_error = function(err) {
-        //             console.log("error:", err);
-        //         };
-        //         if (proxyConf.browserRestart) {
-        //             tools.request("kill_browser", {}, {
-        //                 on_reply: restart_reply, on_error: restart_error
-        //             });
-        //         }
-        //     };
-        //     var proxy_error = function(err) {
-        //         console.log("error:", err);
-        //     };
-        //     tools.request(activeState ? "disable_proxy" : "enable_proxy", {}, {
-        //         on_reply: proxy_reply, on_error: proxy_error
-        //     });
-        // }
-        // else {
-        //     systemdServiceIface.updateProperties()
-        // }
         systemdServiceIface.updateProperties()
         enableSwitch.busy = true
     }
