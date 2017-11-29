@@ -6,7 +6,7 @@ BuildArch: noarch
 
 Summary:    Settings plugin adding gost control button
 Version:    0.1.1
-Release:    3
+Release:    4
 Group:      Qt/Qt
 License:    TODO
 Source0:    %{name}-%{version}.tar.bz2

@@ -13,8 +13,11 @@
             }
         },
         {
-            "path": "system_settings/connectivity/gost/gost_active",
+            "path": "system_settings/connectivity/gost/enable_switch",
             "type": "custom",
+            "title": "Gost",
+            "translation_id": "settings_system-gost",
+            "icon": "image://theme/icon-settings-gost",
             "params": {
                 "source": "/usr/share/jolla-settings/pages/gost/EnableSwitch.qml",
                 "type": "grid"

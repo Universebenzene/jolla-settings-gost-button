@@ -183,9 +183,9 @@ Page {
                                 serverField.text &&
                                 portField.text &&
                                 passField.text &&
-                                encryptionModel.get(comboField.currentIndex).name){
-//                            console.log(serverField.text +","+ portField.text  +","+ passField.text  +","+ encryptionModel.get(comboField.currentIndex).name)
-                            py.updateConfig(serverField.text, portField.text , passField.text , encryptionModel.get(comboField.currentIndex).name);
+                                comboField.value){
+//                            console.log(serverField.text +","+ portField.text  +","+ passField.text  +","+ comboField.value)
+                            py.updateConfig(serverField.text, portField.text , passField.text , comboField.value);
                         }
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
@@ -248,7 +248,6 @@ Page {
                         }
                     }
                 }
-
             }
         }
     }
@@ -258,6 +257,6 @@ Page {
     }
 
     Component.onDestruction: {
-        py.updateConfig(serverField.text, portField.text , passField.text , encryptionModel.get(comboField.currentIndex).name);
+        py.updateConfig(serverField.text, portField.text , passField.text , comboField.value);
     }
 }
