@@ -4,11 +4,16 @@ import org.nemomobile.dbus 2.0
 import org.nemomobile.configuration 1.0
 import Mer.Cutes 1.1
 
+
 Switch {
     id: enableSwitch
 
     property string entryPath
     property bool activeState
+    icon.source: "image://theme/icon-settings-gost"
+    checked: activeState
+    automaticCheck: false
+
     onActiveStateChanged: {
         enableSwitch.busy = false
     }
@@ -20,7 +25,7 @@ Switch {
 
     Timer {
         id: checkState
-        interval: 1000
+        interval: 3000
         repeat: true
         onTriggered: {
             systemdServiceIface.updateProperties()
@@ -37,17 +42,14 @@ Switch {
         signalsEnabled: true
         function updateProperties() {
             var activeProperty = systemdServiceIface.getProperty("ActiveState")
-            console.log("ActiveState:", activeProperty)
+            // console.log("ActiveState:", activeProperty)
             if (activeProperty === "active") {
-                activeState = true
                 checkState.stop()
+                activeState = true
             }
             else if (activeProperty === "inactive") {
-                activeState = false
                 checkState.stop()
-            }
-            else {
-                checkState.start()
+                activeState = false
             }
         }
 
@@ -81,17 +83,15 @@ Switch {
         }
     }
 
-    icon.source: "image://theme/icon-settings-gost"
-    checked: activeState == "active"
-    automaticCheck: false
+    
     onClicked: {
         if (enableSwitch.busy) {
             return
         }
-        systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
         enableSwitch.busy = true
+        systemdServiceIface.call(enableSwitch.activeState ? "Stop" : "Start", ["replace"])
         systemdServiceIface.updateProperties()
-        
+        checkState.start()
     }
 
     Behavior on opacity { FadeAnimation { } }
