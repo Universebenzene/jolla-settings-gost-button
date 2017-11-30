@@ -15,7 +15,7 @@ sample_configs = """{
     "Debug": true,
     "Retries": 3,
     "ServeNodes": [
-       "http://:10080"
+       "socks://127.0.0.1:10080"
     ],
     "ChainNodes": [
        "ss://aes-256-cfb:password@192.168.2.1:2379"
@@ -37,20 +37,23 @@ def getSS():
     try:
         config_str = readConfig()
         config_map = json.loads(config_str)
-        return config_map.get("ChainNodes")[0]
+        return config_map
     except:
         return None
 
-def update( server, port, passwd, encryption):
-    chain_server = "ss://%s:%s@%s:%s" % (encryption, passwd, server, port)
+def update( server, port, passwd, encryption, protocol, lport):
+    chain_node = "ss://%s:%s@%s:%s" % (encryption, passwd, server, port)
+    server_node = "%s://127.0.0.1:%s" % (protocol, lport)
     if os.path.exists(gost_conf):
         config_str = readConfig()
         config_map = json.loads(config_str)
-        config_map["ChainNodes"][0] = chain_server
+        config_map["ChainNodes"][0] = chain_node
+        config_map["ServeNodes"][0] = server_node
         writeConfig(json.dumps(config_map,indent=4))
     else:
         config_map = json.loads(sample_configs)
-        config_map["ChainNodes"][0] = chain_server
+        config_map["ChainNodes"][0] = chain_node
+        config_map["ServeNodes"][0] = server_node
         writeConfig(json.dumps(config_map,indent=4))
 
 

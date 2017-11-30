@@ -18,13 +18,6 @@ Switch {
         source: "./tools.js"
     }
 
-    ConfigurationGroup {
-        id: proxyConf
-        path: "/apps/gost-button"
-        property bool browserProxy: true
-        property bool browserRestart: true
-    }
-
     Timer {
         id: checkState
         interval: 1000
@@ -96,8 +89,9 @@ Switch {
             return
         }
         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
-        systemdServiceIface.updateProperties()
         enableSwitch.busy = true
+        systemdServiceIface.updateProperties()
+        
     }
 
     Behavior on opacity { FadeAnimation { } }

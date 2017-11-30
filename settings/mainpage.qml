@@ -55,6 +55,28 @@ Page {
         }
     }
 
+    ListModel{
+        id: protocolModel
+        ListElement{
+            name: "http"
+        }
+        ListElement{
+            name: "socks4"
+        }
+        ListElement{
+            name: "socks4a"
+        }
+        ListElement{
+            name: "socks5"
+        }
+        ListElement{
+            name: "ss"
+        }
+        ListElement{
+            name: "forward"
+        }
+    }
+
     DBusInterface {
         id: systemdServiceIface
         bus: DBus.SessionBus
@@ -120,23 +142,32 @@ Page {
             })
         }
 
-        function updateConfig(server, port, passwd, encryption){
-            call_sync('main.update',[server, port, passwd, encryption])
+        function updateConfig(server, port, passwd, encryption, protocol, lport){
+            call_sync('main.update',[server, port, passwd, encryption, protocol, lport])
         }
 
         function getConfig(){
             call('main.getSS',[],function(result){
                 if(result){
+                    var serveNodes = result.ServeNodes;
+                    var chainNodes = result.ChainNodes;
                     // ss://aes-256-cfb:password@192.168.2.1:2379
-                    var arr = result.replace("//","").split(":");
+                    var chain = chainNodes[0];
+                    // socks://127.0.0.1:10080
+                    var serve = serveNodes[0];
+
+                    var arr = chain.replace("//","").split(":");
                     var encryption = arr[1]
                     var port = arr[3]
                     var passwd = arr[2].split("@")[0];
                     var server = arr[2].split("@")[1];
+                    var arr_l = serve.replace("//","").split(":");
                     serverField.text = server;
                     portField.text = port;
                     passField.text = passwd;
                     comboField.value = encryption;
+                    localCombox.value = arr_l[0];
+                    localPort.text = arr_l[2];
                 }
             })
         }
@@ -173,7 +204,6 @@ Page {
                     automaticCheck: false
                     checked: activeState
                     text: "Gost service state"
-                    //description: qsTrId("settings_flight-la-flight-mode-description")
 
                     onClicked: {
                         if (enableSwitch.busy) {
@@ -183,9 +213,18 @@ Page {
                                 serverField.text &&
                                 portField.text &&
                                 passField.text &&
-                                comboField.value){
-//                            console.log(serverField.text +","+ portField.text  +","+ passField.text  +","+ comboField.value)
-                            py.updateConfig(serverField.text, portField.text , passField.text , comboField.value);
+                                comboField.value &&
+                                localCombox.value &&
+                                localPort.text
+                                ){
+                            py.updateConfig(
+                                        serverField.text,
+                                        portField.text,
+                                        passField.text,
+                                        comboField.value,
+                                        localCombox.value,
+                                        localPort.text
+                                        );
                         }
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
@@ -197,6 +236,9 @@ Page {
             }
 
 
+            SectionHeader{
+                text: "Server"
+            }
 
             TextField{
                 id: serverField
@@ -204,6 +246,7 @@ Page {
                 placeholderText: "Enter you server"
                 label: "Server"
                 width: parent.width
+                inputMethodHints: Qt.ImhNoAutoUppercase
                 EnterKey.enabled: text || inputMethodComposing
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: portField.focus = true
@@ -215,11 +258,11 @@ Page {
                 width: parent.width
                 placeholderText: "Enter you server port"
                 label: "Port"
+                inputMethodHints: Qt.ImhDigitsOnly
                 EnterKey.enabled: text || inputMethodComposing
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: passField.focus = true
             }
-
 
             PasswordField{
                 id: passField
@@ -249,6 +292,40 @@ Page {
                     }
                 }
             }
+
+            SectionHeader{
+                text: "Local"
+            }
+
+            ComboBox{
+                id: localCombox
+                enabled: !enableSwitch.checked
+                width: parent.width
+                label: "Protocols"
+                menu: ContextMenu {
+                    Repeater {
+                        model: protocolModel
+                        MenuItem {
+                            text: name
+                            onClicked:{
+                                localCombox.value = name;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            TextField{
+                id: localPort
+                enabled: !enableSwitch.checked
+                width: parent.width
+                placeholderText: "Enter you local port"
+                label: "Port"
+                EnterKey.enabled: text || inputMethodComposing
+                inputMethodHints: Qt.ImhDigitsOnly
+            }
+
         }
     }
 
@@ -257,6 +334,13 @@ Page {
     }
 
     Component.onDestruction: {
-        py.updateConfig(serverField.text, portField.text , passField.text , comboField.value);
+        py.updateConfig(
+                    serverField.text,
+                    portField.text,
+                    passField.text,
+                    comboField.value,
+                    localCombox.value,
+                    localPort.text
+                    );
     }
 }
