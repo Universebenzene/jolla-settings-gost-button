@@ -47,7 +47,7 @@ mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.25/icons/
 mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.5/icons/
 mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.75/icons/
 mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z2.0/icons/
-cp -r icons/24x24/*.png %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.0/icons/
+cp -r icons/64x64/*.png %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.0/icons/
 cp -r icons/72x72/*.png %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.5-large/icons/
 cp -r icons/80x80/*.png %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.25/icons/
 cp -r icons/96x96/*.png %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.5/icons/
