@@ -55,6 +55,3 @@ def update( server, port, passwd, encryption, protocol, lport):
         config_map["ChainNodes"][0] = chain_node
         config_map["ServeNodes"][0] = server_node
         writeConfig(json.dumps(config_map,indent=4))
-
-
-

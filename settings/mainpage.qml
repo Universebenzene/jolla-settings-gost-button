@@ -22,6 +22,7 @@ Page {
     ConfigurationGroup {
         id: proxyConf
         path: "/apps/gost-button"
+        property bool globalProxy: true
     }
 
     Timer {
@@ -61,6 +62,9 @@ Page {
             name: "http"
         }
         ListElement{
+            name: "redirect"
+        }
+        ListElement{
             name: "socks4"
         }
         ListElement{
@@ -72,9 +76,7 @@ Page {
         ListElement{
             name: "ss"
         }
-        ListElement{
-            name: "forward"
-        }
+        
     }
 
     DBusInterface {
@@ -226,12 +228,38 @@ Page {
                                         localPort.text
                                         );
                         }
+                        if (proxyConf.globalProxy) {
+                            var proxy_reply = function(str) {
+                                console.log("debug:" ,str)
+                            };
+                            var proxy_error = function(err) {
+                                console.log("error:", err);
+                            };
+                            tools.request(activeState ? "disable_proxy" : "enable_proxy", {}, {
+                                on_reply: proxy_reply, on_error: proxy_error
+                            });
+                        }
+                        else {
+                            systemdServiceIface.updateProperties()
+                        }
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
                         systemdServiceIface.updateProperties()
 
                     }
                     onPressAndHold: enableItem.showMenu({ settingEntryPath: entryPath, isFavorite: favorites.isFavorite(entryPath) })
+                }
+
+                TextSwitch {
+                    id: proxySwitch
+                    automaticCheck: false
+                    checked: localCombox.value === "redirect" && proxyConf.globalProxy
+                    enabled: localCombox.value === "redirect"
+                    text: "Global proxy"
+                    description: "Only enabled when local protocol is \"redirect\""
+                    onClicked: {
+                        proxyConf.globalProxy = !proxyConf.globalProxy
+                    }
                 }
             }
 

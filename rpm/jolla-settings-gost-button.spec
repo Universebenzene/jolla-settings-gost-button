@@ -5,12 +5,14 @@ BuildArch: noarch
 # << macros
 
 Summary:    Settings plugin adding gost control button
-Version:    0.1.2
-Release:    2
+Version:    0.1.3
+Release:    1
 Group:      Qt/Qt
 License:    TODO
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   gost
+Requires:   pdnsd
+Requires:   cutes-js
 Requires:   pyotherside-qml-plugin-python3-qt5 >= 1.3.0
 
 %description
