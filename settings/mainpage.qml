@@ -3,7 +3,6 @@ import Sailfish.Silica 1.0
 import com.jolla.settings 1.0
 import org.nemomobile.dbus 2.0
 import org.nemomobile.configuration 1.0
-import Mer.Cutes 1.1
 import io.thp.pyotherside 1.3
 
 Page {
@@ -12,11 +11,6 @@ Page {
     property bool activeState
     onActiveStateChanged: {
         enableSwitch.busy = false
-    }
-
-    CutesActor {
-        id: tools
-        source: "./tools.js"
     }
 
     ConfigurationGroup {
@@ -135,6 +129,14 @@ Page {
         }
     }
 
+    DBusInterface {
+        id: proxyBus
+        bus: DBus.SessionBus
+        service: "xyz.birdzhang.gost.global"
+        path: "/org/freedesktop/systemd1/unit/xyz_2ebirdzhang_2egost_2eglobal_2eservice"
+        iface: "xyz.birdzhang.gost.global"
+    }
+
     Python{
         id: py
         Component.onCompleted: {
@@ -228,38 +230,29 @@ Page {
                                         localPort.text
                                         );
                         }
-                        if (proxyConf.globalProxy) {
-                            var proxy_reply = function(str) {
-                                console.log("debug:" ,str)
-                            };
-                            var proxy_error = function(err) {
-                                console.log("error:", err);
-                            };
-                            tools.request(activeState ? "disable_proxy" : "enable_proxy", {}, {
-                                on_reply: proxy_reply, on_error: proxy_error
-                            });
-                        }
-                        else {
-                            systemdServiceIface.updateProperties()
-                        }
+                        
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
+                        if (proxyConf.globalProxy) {
+                            proxyBus.call(enableSwitch.activeState ? 'Stop' : 'Start',["replace"]);
+                        }
                         systemdServiceIface.updateProperties()
 
                     }
                     onPressAndHold: enableItem.showMenu({ settingEntryPath: entryPath, isFavorite: favorites.isFavorite(entryPath) })
                 }
 
-                TextSwitch {
-                    id: proxySwitch
-                    automaticCheck: false
-                    checked: localCombox.value === "redirect" && proxyConf.globalProxy
-                    enabled: localCombox.value === "redirect"
-                    text: "Global proxy"
-                    description: "Only enabled when local protocol is \"redirect\""
-                    onClicked: {
-                        proxyConf.globalProxy = !proxyConf.globalProxy
-                    }
+                
+            }
+            TextSwitch {
+                id: proxySwitch
+                automaticCheck: false
+                checked: localCombox.value === "redirect" && proxyConf.globalProxy
+                enabled: localCombox.value === "redirect" && !enableSwitch.checked
+                text: "Global proxy"
+                description: "Only enabled when local protocol is \"redirect\""
+                onClicked: {
+                    proxyConf.globalProxy = !proxyConf.globalProxy
                 }
             }
 

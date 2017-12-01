@@ -7,6 +7,8 @@ Created on 2017年11月29日
 '''
 import json
 import os
+import subprocess
+import signal
 
 HOME = os.path.expanduser("~")
 XDG_CONFIG_HOME = os.environ.get("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
@@ -55,3 +57,7 @@ def update( server, port, passwd, encryption, protocol, lport):
         config_map["ChainNodes"][0] = chain_node
         config_map["ServeNodes"][0] = server_node
         writeConfig(json.dumps(config_map,indent=4))
+
+def startProxy(name):
+    subprocess.call(["gost_proxy.sh", name], shell=True)
+    os.killpg(os.getpgid(pro.pid), signal.SIGTERM)

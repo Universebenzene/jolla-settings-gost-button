@@ -39,7 +39,6 @@ mkdir -p %{buildroot}/usr/bin
 cp -r settings/*.sh %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/share/jolla-settings/pages/gost
 cp -r settings/*.qml %{buildroot}/usr/share/jolla-settings/pages/gost
-cp -r settings/*.js %{buildroot}/usr/share/jolla-settings/pages/gost
 cp -r settings/*.py %{buildroot}/usr/share/jolla-settings/pages/gost
 mkdir -p %{buildroot}/usr/share/jolla-settings/entries
 cp -r settings/*.json %{buildroot}/usr/share/jolla-settings/entries

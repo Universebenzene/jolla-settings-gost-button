@@ -2,7 +2,7 @@ import QtQuick 2.1
 import Sailfish.Silica 1.0
 import org.nemomobile.dbus 2.0
 import org.nemomobile.configuration 1.0
-import Mer.Cutes 1.1
+import io.thp.pyotherside 1.3
 
 
 Switch {
@@ -18,9 +18,27 @@ Switch {
         enableSwitch.busy = false
     }
 
-    CutesActor {
-        id: tools
-        source: "./tools.js"
+
+    ConfigurationGroup {
+        id: proxyConf
+        path: "/apps/gost-button"
+        property bool globalProxy: true
+    }
+
+    Python{
+        id: py
+        Component.onCompleted: {
+            addImportPath(Qt.resolvedUrl('./'))
+            py.importModule('main', function () {
+
+            })
+        }
+
+        function startProxy(name){
+            call('main.startProxy',[name],function(result){
+
+            });
+        }
     }
 
     Timer {
@@ -83,6 +101,14 @@ Switch {
         }
     }
 
+    DBusInterface {
+        id: proxyBus
+        bus: DBus.SessionBus
+        service: "xyz.birdzhang.gost.global"
+        path: "/"
+        iface: "xyz.birdzhang.gost.global"
+    }
+
     
     onClicked: {
         if (enableSwitch.busy) {
@@ -90,6 +116,9 @@ Switch {
         }
         enableSwitch.busy = true
         systemdServiceIface.call(enableSwitch.activeState ? "Stop" : "Start", ["replace"])
+        if (proxyConf.globalProxy) {
+            proxyBus.call(enableSwitch.activeState ? 'Stop' : 'Start',["replace"]);
+        }
         systemdServiceIface.updateProperties()
         checkState.start()
     }
