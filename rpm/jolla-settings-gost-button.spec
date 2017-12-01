@@ -12,7 +12,7 @@ License:    TODO
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   gost
 Requires:   pdnsd
-Requires:   pyotherside-qml-plugin-python3-qt5 >= 1.3.0
+Requires:   pyotherside-qml-plugin-python3-qt5 >= 1.5.1
 
 %description
 Settings plugin adding gost control button
