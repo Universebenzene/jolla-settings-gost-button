@@ -70,7 +70,7 @@ Page {
         ListElement{
             name: "ss"
         }
-        
+
     }
 
     DBusInterface {
@@ -230,11 +230,13 @@ Page {
                                         localPort.text
                                         );
                         }
-                        
+
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
                         if (proxyConf.globalProxy) {
-                            proxyBus.call(enableSwitch.activeState ? 'Stop' : 'Start',["replace"]);
+                            if (enableSwitch.checked) {
+                                proxyBus.call('Stop',undefined);
+                            }
                         }
                         systemdServiceIface.updateProperties()
 
@@ -242,17 +244,21 @@ Page {
                     onPressAndHold: enableItem.showMenu({ settingEntryPath: entryPath, isFavorite: favorites.isFavorite(entryPath) })
                 }
 
-                
+
             }
             TextSwitch {
                 id: proxySwitch
                 automaticCheck: false
-                checked: localCombox.value === "redirect" && proxyConf.globalProxy
-                enabled: localCombox.value === "redirect" && !enableSwitch.checked
+                checked: proxyConf.globalProxy
+                enabled: localCombox.value === "redirect" && enableSwitch.checked
                 text: "Global proxy"
                 description: "Only enabled when local protocol is \"redirect\""
                 onClicked: {
+                    busy = true;
                     proxyConf.globalProxy = !proxyConf.globalProxy
+                    if (enableSwitch.checked) {
+                        proxyBus.call('Start',undefined);
+                    }
                 }
             }
 

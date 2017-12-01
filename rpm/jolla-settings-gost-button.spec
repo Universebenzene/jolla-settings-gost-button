@@ -12,7 +12,6 @@ License:    TODO
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   gost
 Requires:   pdnsd
-Requires:   cutes-js
 Requires:   pyotherside-qml-plugin-python3-qt5 >= 1.3.0
 
 %description
