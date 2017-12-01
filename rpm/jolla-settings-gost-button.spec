@@ -42,6 +42,8 @@ cp -r settings/*.qml %{buildroot}/usr/share/jolla-settings/pages/gost
 cp -r settings/*.py %{buildroot}/usr/share/jolla-settings/pages/gost
 mkdir -p %{buildroot}/usr/share/jolla-settings/entries
 cp -r settings/*.json %{buildroot}/usr/share/jolla-settings/entries
+mkdir -p %{buildroot}/usr/lib/systemd/user
+cp *.service %{buildroot}/usr/lib/systemd/user/
 mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.0/icons/
 mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.5-large/icons/
 mkdir -p %{buildroot}/usr/share/themes/sailfish-default/meegotouch/z1.25/icons/
@@ -70,6 +72,6 @@ cp -r icons/128x128/*.png %{buildroot}/usr/share/themes/sailfish-default/meegoto
 %{_datadir}/themes/sailfish-default/meegotouch/z1.5-large/icons/*.png
 %{_datadir}/themes/sailfish-default/meegotouch/z1.75/icons/*.png
 %{_datadir}/themes/sailfish-default/meegotouch/z2.0/icons/*.png
-
+%{_libdir}/systemd/user/
 # >> files
 # << files
