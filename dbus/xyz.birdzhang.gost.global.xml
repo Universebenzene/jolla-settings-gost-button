@@ -1,0 +1,14 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" 
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="xyz.birdzhang.gost.global">
+    <method name="Start">
+       <arg type="s" direction="in" />
+       <arg type="i" direction="out" />
+    </method>
+    <method name="Stop">
+       <arg type="s" direction="in" />
+       <arg type="i" direction="out" />
+    </method>
+  </interface>
+</node>

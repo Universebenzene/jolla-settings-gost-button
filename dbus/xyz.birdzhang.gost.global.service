@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=xyz.birdzhang.gost.global
+Exec=/usr/bin/gost_proxy.sh $1
+User=root

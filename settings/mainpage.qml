@@ -131,7 +131,7 @@ Page {
 
     DBusInterface {
         id: proxyBus
-        bus: DBus.SessionBus
+        bus: DBus.SystemBus
         service: "xyz.birdzhang.gost.global"
         path: "/org/freedesktop/systemd1/unit/xyz_2ebirdzhang_2egost_2eglobal_2eservice"
         iface: "xyz.birdzhang.gost.global"
@@ -234,14 +234,20 @@ Page {
                         enableSwitch.busy = true
                         systemdServiceIface.call(activeState ? "Stop" : "Start", ["replace"])
                         if (proxyConf.globalProxy) {
-                            if (enableSwitch.checked) {
-                                proxyBus.call('Stop',undefined);
-                            }
+                                var args = [{'type': 's', 'value': 'replace'}];
+                                return proxyBus.typedCall(enableSwitch.checked ? 'Start':'Stop', args, 
+                                function(result) {
+                                    console.log("Debug:", result);
+                                },
+                                function(error) {
+                                    console.log("Error:" , error);
+                                });
+                            
                         }
                         systemdServiceIface.updateProperties()
 
                     }
-                    onPressAndHold: enableItem.showMenu({ settingEntryPath: entryPath, isFavorite: favorites.isFavorite(entryPath) })
+                    // onPressAndHold: enableItem.showMenu({ settingEntryPath: entryPath, isFavorite: favorites.isFavorite(entryPath) })
                 }
 
 
@@ -255,10 +261,18 @@ Page {
                 description: "Only enabled when local protocol is \"redirect\""
                 onClicked: {
                     busy = true;
-                    proxyConf.globalProxy = !proxyConf.globalProxy
-                    if (enableSwitch.checked) {
-                        proxyBus.call('Start',undefined);
-                    }
+                    // proxyBus.call('Start',undefined);
+                    var args = [{'type': 's', 'value': 'replace'}];
+                    proxyConf.globalProxy =  !proxyBus.typedCall('Stop', args, 
+                        function(result) {
+                            console.log("Debug:",result);
+                            busy = false;
+                        },
+                        function(error) {
+                            console.log("Error:" , error);
+                            busy = false;
+                        });
+                    
                 }
             }
 

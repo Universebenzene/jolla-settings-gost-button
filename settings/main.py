@@ -58,6 +58,3 @@ def update( server, port, passwd, encryption, protocol, lport):
         config_map["ServeNodes"][0] = server_node
         writeConfig(json.dumps(config_map,indent=4))
 
-def startProxy(name):
-    subprocess.call(["gost_proxy.sh", name], shell=True)
-    os.killpg(os.getpgid(pro.pid), signal.SIGTERM)
